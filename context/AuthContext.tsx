@@ -11,7 +11,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const supabase = createClient();
 
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null);
       setLoading(false);
     });
@@ -21,23 +21,31 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const loginWithProvider = async (provider: 'google' | 'azure') => {
     setLoadingProvider(provider);
     try {
-      const options: {
-        redirectTo: string;
-        scopes?: string;
-        queryParams?: Record<string, string>;
-      } = {
+      const options: any = {
         redirectTo: `${window.location.origin}/auth/callback`,
+        scopes: 'openid email profile',
       };
 
       if (provider === 'google') {
-        options.scopes = 'openid email profile';
-        options.queryParams = { prompt: 'select_account', access_type: 'offline' };
+        options.queryParams = { 
+          prompt: 'select_account', 
+          access_type: 'offline' 
+        };
       }
 
-      const { data, error } = await supabase.auth.signInWithOAuth({ provider, options });
+      if (provider === 'azure') {
+        options.queryParams = { 
+          prompt: 'select_account',
+        };
+      }
+
+      const { data, error } = await supabase.auth.signInWithOAuth({ 
+        provider, 
+        options 
+      });
 
       if (error) {
-        console.error('OAuth error:', error);
+        console.error(`${provider} OAuth error:`, error);
         setLoadingProvider(null);
         return;
       }
@@ -56,20 +64,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     await supabase.auth.signOut();
   };
 
-  const signInWithGoogleIdToken = async (idToken: string) => {
-    const { error } = await supabase.auth.signInWithIdToken({
-      provider: 'google',
-      token: idToken,
-    });
-    if (error) {
-      console.error('signInWithIdToken error:', error);
-      throw error;
-    }
-  };
-
   return (
-    <AuthContext.Provider value={{ user, loading, loadingProvider, loginWithProvider, signInWithGoogleIdToken, logout }}>
-      {!loading && children}
+    <AuthContext.Provider value={{ user, loading, loadingProvider, loginWithProvider, logout }}>
+      {!loading ? children : (
+        <div className="flex items-center justify-center min-h-screen bg-slate-950 text-blue-400 font-mono">
+          INITIALIZING_SENTINEL_UPLINK...
+        </div>
+      )}
     </AuthContext.Provider>
   );
 };
