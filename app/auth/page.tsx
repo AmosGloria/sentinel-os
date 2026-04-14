@@ -262,7 +262,7 @@ function AuthPageInner() {
 
         <div className="sa-card">
           <div className="sa-logo">
-            <span className="sa-logo-text">Sentinel-OS</span>
+            <span className="sa-logo-text">KoboTrack</span>
           </div>
 
           {errorMsg && (

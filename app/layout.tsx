@@ -15,8 +15,12 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Sentinel-OS",
+  title: "KoboTrack",
   description: "Your Autonomous OPs",
+  icons: {
+    icon: "/Images/logo.png",
+    apple: "/Images/logo.png",
+  },
 };
 
 export default function RootLayout({
@@ -27,7 +31,6 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        {/* AuthProvider must be the TOP level wrapper */}
         <AuthProvider>
           <AgentProvider>
             {children}
