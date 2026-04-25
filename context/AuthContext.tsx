@@ -1,6 +1,6 @@
 "use client";
 import { createContext, useContext, useEffect, useState } from 'react';
-import { createClient } from '@/utils/supabase/client';
+import { createClient } from '@/lib/services/supabase/client';
 
 const AuthContext = createContext<any>(undefined);
 
@@ -27,21 +27,21 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       };
 
       if (provider === 'google') {
-        options.queryParams = { 
-          prompt: 'select_account', 
-          access_type: 'offline' 
+        options.queryParams = {
+          prompt: 'select_account',
+          access_type: 'offline'
         };
       }
 
       if (provider === 'azure') {
-        options.queryParams = { 
+        options.queryParams = {
           prompt: 'select_account',
         };
       }
 
-      const { data, error } = await supabase.auth.signInWithOAuth({ 
-        provider, 
-        options 
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider,
+        options
       });
 
       if (error) {
@@ -53,7 +53,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       if (data?.url) {
         window.location.href = data.url;
       }
- 
+
     } catch (err) {
       console.error('Unexpected OAuth error:', err);
       setLoadingProvider(null);
@@ -68,7 +68,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     <AuthContext.Provider value={{ user, loading, loadingProvider, loginWithProvider, logout }}>
       {!loading ? children : (
         <div className="flex items-center justify-center min-h-screen bg-slate-950 text-blue-400 font-mono">
-          INITIALIZING_SENTINEL_UPLINK...
+          Loading
         </div>
       )}
     </AuthContext.Provider>

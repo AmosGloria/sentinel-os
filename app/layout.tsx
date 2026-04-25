@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { AuthProvider } from '@/context/AuthContext';
 import { AgentProvider } from '@/context/AgentContext';
+import Script from 'next/script'; // Import Script
 import "./globals.css";
 
 const geistSans = Geist({
@@ -30,12 +31,16 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <AuthProvider>
           <AgentProvider>
             {children}
           </AgentProvider>
         </AuthProvider>
+        <Script 
+          src="https://connect.withmono.com/connect.js" 
+          strategy="afterInteractive" 
+        />
       </body>
     </html>
   );
